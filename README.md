@@ -1,7 +1,11 @@
 # vulcan-metrics-client
 Wrapper around DataDog statsd client used as metrics client abstraction in Vulcan components.
 
-Supports count, gauge, histogram and distribution metrics.
+Supports metrics types:
+- count
+- gauge
+- histogram
+- distribution
 
 Metrics are divided in `Metric`, which defaults to a sample rate of 1.0, and `RatedMetric` which allows to specify its sample rate between 0 (everything is sampled) and 1 (no sample); see the [sample rates section](https://docs.datadoghq.com/developers/metrics/dogstatsd_metrics_submission/?tab=go#sample-rates) in DataDog.
 
