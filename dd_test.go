@@ -364,7 +364,7 @@ func TestPush(t *testing.T) {
 			expectedDistributionMetrics: tc.expectedDistributionMetrics,
 		}
 
-		ddClient := &DDClient{
+		ddClient := &ddClient{
 			enabled:   tc.metricsEnabled,
 			statsdCli: mockStatsdClient,
 		}
@@ -527,7 +527,7 @@ func TestPushWithRate(t *testing.T) {
 			expectedDistributionMetrics: tc.expectedDistributionMetrics,
 		}
 
-		ddClient := &DDClient{
+		ddClient := &ddClient{
 			enabled:   tc.metricsEnabled,
 			statsdCli: mockStatsdClient,
 		}

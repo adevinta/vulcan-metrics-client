@@ -11,16 +11,16 @@ const (
 	defaultPort = 8125
 )
 
-// DDClient represents a DataDog metrics client.
-type DDClient struct {
+// ddClient represents a DataDog metrics client.
+type ddClient struct {
 	enabled   bool
 	statsdCli statsd.ClientInterface
 }
 
 type pushMetricsFunc func(name string, value, rate float64, tags []string)
 
-// NewDDClient creates a new DataDog metrics client.
-func NewDDClient(enabled bool, statsdHost string, statsdPort int) (*DDClient, error) {
+// newDDClient creates a new DataDog metrics client.
+func newDDClient(enabled bool, statsdHost string, statsdPort int) (*ddClient, error) {
 	if statsdHost == "" {
 		statsdHost = defaultHost
 	}
@@ -34,14 +34,14 @@ func NewDDClient(enabled bool, statsdHost string, statsdPort int) (*DDClient, er
 		return nil, err
 	}
 
-	return &DDClient{
+	return &ddClient{
 		enabled:   enabled,
 		statsdCli: statsdCli,
 	}, nil
 }
 
 // Push pushes the specified metric with rate 1.
-func (c *DDClient) Push(m Metric) {
+func (c *ddClient) Push(m Metric) {
 	if !c.enabled {
 		return
 	}
@@ -49,7 +49,7 @@ func (c *DDClient) Push(m Metric) {
 }
 
 // PushWithRate pushes the input metric with the specified rate.
-func (c *DDClient) PushWithRate(m RatedMetric) {
+func (c *ddClient) PushWithRate(m RatedMetric) {
 	if !c.enabled {
 		return
 	}
@@ -72,18 +72,18 @@ func (c *DDClient) PushWithRate(m RatedMetric) {
 	pushFunc(m.Name, m.Value, m.Rate, m.Tags)
 }
 
-func (c *DDClient) count(name string, value, rate float64, tags []string) {
+func (c *ddClient) count(name string, value, rate float64, tags []string) {
 	c.statsdCli.Count(name, int64(value), tags, rate)
 }
 
-func (c *DDClient) gauge(name string, value, rate float64, tags []string) {
+func (c *ddClient) gauge(name string, value, rate float64, tags []string) {
 	c.statsdCli.Gauge(name, value, tags, rate)
 }
 
-func (c *DDClient) histogram(name string, value, rate float64, tags []string) {
+func (c *ddClient) histogram(name string, value, rate float64, tags []string) {
 	c.statsdCli.Histogram(name, value, tags, rate)
 }
 
-func (c *DDClient) distribution(name string, value, rate float64, tags []string) {
+func (c *ddClient) distribution(name string, value, rate float64, tags []string) {
 	c.statsdCli.Distribution(name, value, tags, rate)
 }
