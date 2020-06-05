@@ -13,8 +13,9 @@ const (
 	envHost       = "METRICS_HOST"
 	envPort       = "METRICS_PORT"
 
-	// Supported implementations.
-	dataDog = "dd"
+	// DataDogClient represents the DataDog
+	// implementation for metrics client.
+	DataDogClient = "dd"
 
 	// Count represents a count metric type.
 	Count = iota
@@ -62,7 +63,7 @@ type Client interface {
 // NewClient creates a new metrics client based on given input.
 func NewClient(typ ClientType, enabled bool, host string, port int) (Client, error) {
 	switch typ {
-	case dataDog:
+	case DataDogClient:
 		return newDDClient(enabled, host, port)
 	default:
 		return nil, ErrUnsupportedClientType
