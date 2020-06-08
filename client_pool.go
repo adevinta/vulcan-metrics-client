@@ -1,5 +1,10 @@
 package metrics
 
+import (
+	"log"
+	"os"
+)
+
 // clientPool represents a metrics client pool.
 type clientPool struct {
 	clients []Client
@@ -24,11 +29,13 @@ var (
 //		DOGSTATSD_HOST
 //		DOGSTATSD_PORT
 func newClientPool() (*clientPool, error) {
+	log.SetOutput(os.Stdout)
 	var clients []Client
 
-	for _, cConstructor := range supportedClients {
+	for cName, cConstructor := range supportedClients {
 		c, err := cConstructor()
 		if err == nil {
+			log.Print("Metrics client initialized for: ", cName)
 			clients = append(clients, c)
 		}
 	}
