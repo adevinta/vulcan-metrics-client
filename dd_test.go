@@ -195,7 +195,7 @@ func verificationError(metric string, expected, actual interface{}) error {
 		metric, expected, actual)
 }
 
-func TestPush(t *testing.T) {
+func TestDDPush(t *testing.T) {
 	testCases := []struct {
 		metricsEnabled              bool
 		inputMetrics                []Metric
@@ -379,7 +379,7 @@ func TestPush(t *testing.T) {
 	}
 }
 
-func TestPushWithRate(t *testing.T) {
+func TestDDPushWithRate(t *testing.T) {
 	testCases := []struct {
 		metricsEnabled              bool
 		inputMetrics                []RatedMetric
