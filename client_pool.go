@@ -28,7 +28,7 @@ func newClientPool() (*clientPool, error) {
 
 	for _, cConstructor := range supportedClients {
 		c, err := cConstructor()
-		if err != nil {
+		if err == nil {
 			clients = append(clients, c)
 		}
 	}
