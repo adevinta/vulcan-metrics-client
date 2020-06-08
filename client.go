@@ -24,10 +24,6 @@ var (
 // Supports Count, Gauge, Histogram and Distribution types.
 type Type int
 
-// ClientType represents the requested metrics
-// client implementation.
-type ClientType string
-
 // Metric represents a metric.
 type Metric struct {
 	Name  string

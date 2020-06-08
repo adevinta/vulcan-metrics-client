@@ -1,6 +1,6 @@
 package metrics
 
-// ClientPool represetns a metris client pool.
+// clientPool represents a metrics client pool.
 type clientPool struct {
 	clients []Client
 }
@@ -23,11 +23,11 @@ var (
 //		DOGSTATSD_ENABLED
 //		DOGSTATSD_HOST
 //		DOGSTATSD_PORT
-func newClientPool() (Client, error) {
+func newClientPool() (*clientPool, error) {
 	var clients []Client
 
-	for _, cconstructor := range supportedClients {
-		c, err := cconstructor()
+	for _, cConstructor := range supportedClients {
+		c, err := cConstructor()
 		if err != nil {
 			clients = append(clients, c)
 		}
