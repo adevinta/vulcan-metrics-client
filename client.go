@@ -2,21 +2,9 @@ package metrics
 
 import (
 	"errors"
-	"os"
-	"strconv"
 )
 
 const (
-	// Config env variables.
-	envClientType = "METRICS_CLIENT_TYPE"
-	envEnabled    = "METRICS_ENABLED"
-	envHost       = "METRICS_HOST"
-	envPort       = "METRICS_PORT"
-
-	// DataDogClient represents the DataDog
-	// implementation for metrics client.
-	DataDogClient = "dd"
-
 	// Count represents a count metric type.
 	Count = iota
 	// Gauge represents a gauge metric type.
@@ -60,22 +48,7 @@ type Client interface {
 	PushWithRate(ratedMetric RatedMetric)
 }
 
-// NewClient creates a new metrics client based on given input.
-func NewClient(typ ClientType, enabled bool, host string, port int) (Client, error) {
-	switch typ {
-	case DataDogClient:
-		return newDDClient(enabled, host, port)
-	default:
-		return nil, ErrUnsupportedClientType
-	}
-}
-
-// NewClientFromEnv creates a new metrics client based on environment variables.
-func NewClientFromEnv() (Client, error) {
-	clientType := ClientType(os.Getenv(envClientType))
-	enabled, _ := strconv.ParseBool(os.Getenv(envEnabled))
-	host := os.Getenv(envHost)
-	port, _ := strconv.ParseInt(os.Getenv(envPort), 10, 0)
-
-	return NewClient(clientType, enabled, host, int(port))
+// NewClient creates a new metrics client based on environment variables.
+func NewClient() (Client, error) {
+	return newClientPool()
 }

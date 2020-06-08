@@ -2,11 +2,20 @@ package metrics
 
 import (
 	"fmt"
+	"os"
+	"strconv"
 
 	"github.com/DataDog/datadog-go/statsd"
 )
 
 const (
+	// DDEnabled represents the config env var to enabled DD client.
+	DDEnabled = "DOGSTATSD_ENABLED"
+	// DDHost represents the config env var to set DD client's statsd host.
+	DDHost = "DOGSTATSD_HOST"
+	// DDPort represents the config env var to set DD client's statsd port.
+	DDPort = "DOGSTATSD_PORT"
+
 	defaultHost = "localhost"
 	defaultPort = 8125
 )
@@ -20,7 +29,7 @@ type ddClient struct {
 type pushMetricsFunc func(name string, value, rate float64, tags []string)
 
 // newDDClient creates a new DataDog metrics client.
-func newDDClient(enabled bool, statsdHost string, statsdPort int) (*ddClient, error) {
+func newDDClient(enabled bool, statsdHost string, statsdPort int) (Client, error) {
 	if statsdHost == "" {
 		statsdHost = defaultHost
 	}
@@ -38,6 +47,16 @@ func newDDClient(enabled bool, statsdHost string, statsdPort int) (*ddClient, er
 		enabled:   enabled,
 		statsdCli: statsdCli,
 	}, nil
+}
+
+// newDDClientFromEnv creates a new DataDog metrics client
+// reading its configuration from environment.
+func newDDClientFromEnv() (Client, error) {
+	enabled, _ := strconv.ParseBool(os.Getenv(DDEnabled))
+	host := os.Getenv(DDHost)
+	port, _ := strconv.ParseInt(os.Getenv(DDPort), 10, 0)
+
+	return newDDClient(enabled, host, int(port))
 }
 
 // Push pushes the specified metric with rate 1.
