@@ -1,9 +1,5 @@
 package metrics
 
-import (
-	"errors"
-)
-
 const (
 	// Count represents a count metric type.
 	Count = iota
@@ -13,11 +9,6 @@ const (
 	Histogram = iota
 	// Distribution represents a distribution metric type.
 	Distribution = iota
-)
-
-var (
-	// ErrUnsupportedClientType indicates that the requested client type is not supported.
-	ErrUnsupportedClientType = errors.New("Error: unsupported client type")
 )
 
 // Type represents the type of metric to push.
