@@ -1,6 +1,7 @@
 package metrics
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"strconv"
@@ -20,59 +21,74 @@ const (
 	defaultPort = 8125
 )
 
+var (
+	// ErrDDClientDisabled indicates that DataDog metrics client is disabled by config.
+	ErrDDClientDisabled = errors.New("DataDog metrics client disabled")
+)
+
+// ddConfig represents the DataDog
+// metrics client configuration.
+type ddConfig struct {
+	enabled bool
+	host    string
+	port    int
+}
+
 // ddClient represents a DataDog metrics client.
 type ddClient struct {
-	enabled   bool
 	statsdCli statsd.ClientInterface
 }
 
 type pushMetricsFunc func(name string, value, rate float64, tags []string)
 
-// newDDClient creates a new DataDog metrics client.
-func newDDClient(enabled bool, statsdHost string, statsdPort int) (Client, error) {
-	if statsdHost == "" {
-		statsdHost = defaultHost
-	}
-	if statsdPort == 0 {
-		statsdPort = defaultPort
+// newDDClient creates a new DataDog metrics client
+// reading its configuration from environment.
+func newDDClient() (Client, error) {
+	cfg := parseConfig()
+
+	if !cfg.enabled {
+		return nil, ErrDDClientDisabled
 	}
 
-	statsdAddrs := fmt.Sprintf("%s:%d", statsdHost, statsdPort)
+	if cfg.host == "" {
+		cfg.host = defaultHost
+	}
+	if cfg.port == 0 {
+		cfg.port = defaultPort
+	}
+
+	statsdAddrs := fmt.Sprintf("%s:%d", cfg.host, cfg.port)
 	statsdCli, err := statsd.New(statsdAddrs)
 	if err != nil {
 		return nil, err
 	}
 
 	return &ddClient{
-		enabled:   enabled,
 		statsdCli: statsdCli,
 	}, nil
 }
 
-// newDDClientFromEnv creates a new DataDog metrics client
-// reading its configuration from environment.
-func newDDClientFromEnv() (Client, error) {
+// parseConfig reads the DD metrics client
+// configuration from environment.
+func parseConfig() ddConfig {
 	enabled, _ := strconv.ParseBool(os.Getenv(DDEnabled))
 	host := os.Getenv(DDHost)
 	port, _ := strconv.ParseInt(os.Getenv(DDPort), 10, 0)
 
-	return newDDClient(enabled, host, int(port))
+	return ddConfig{
+		enabled: enabled,
+		host:    host,
+		port:    int(port),
+	}
 }
 
 // Push pushes the specified metric with rate 1.
 func (c *ddClient) Push(m Metric) {
-	if !c.enabled {
-		return
-	}
 	c.PushWithRate(RatedMetric{Metric: m, Rate: 1})
 }
 
 // PushWithRate pushes the input metric with the specified rate.
 func (c *ddClient) PushWithRate(m RatedMetric) {
-	if !c.enabled {
-		return
-	}
-
 	var pushFunc pushMetricsFunc
 
 	switch m.Typ {

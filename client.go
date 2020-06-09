@@ -35,7 +35,7 @@ type Client interface {
 	PushWithRate(ratedMetric RatedMetric)
 }
 
-// NewClient creates a new metrics client based on environment variables.
+// NewClient creates a new metrics client based on environment variables config.
 func NewClient() (Client, error) {
 	return newClientPool()
 }
