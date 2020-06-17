@@ -197,7 +197,6 @@ func verificationError(metric string, expected, actual interface{}) error {
 
 func TestDDPush(t *testing.T) {
 	testCases := []struct {
-		metricsEnabled              bool
 		inputMetrics                []Metric
 		expectedCountMetrics        []statsdCountMetric
 		expectedGaugeMetrics        []statsdDefaultMetric
@@ -205,7 +204,6 @@ func TestDDPush(t *testing.T) {
 		expectedDistributionMetrics []statsdDefaultMetric
 	}{
 		{
-			metricsEnabled: true,
 			inputMetrics: []Metric{
 				{
 					Name:  "countMetricA",
@@ -224,7 +222,6 @@ func TestDDPush(t *testing.T) {
 			},
 		},
 		{
-			metricsEnabled: true,
 			inputMetrics: []Metric{
 				{
 					Name:  "countMetricA",
@@ -269,7 +266,6 @@ func TestDDPush(t *testing.T) {
 			},
 		},
 		{
-			metricsEnabled: true,
 			inputMetrics: []Metric{
 				{
 					Name:  "histogramMetricA",
@@ -327,33 +323,6 @@ func TestDDPush(t *testing.T) {
 				},
 			},
 		},
-		{
-			metricsEnabled: false,
-			inputMetrics: []Metric{
-				{
-					Name:  "countMetricA",
-					Typ:   Count,
-					Value: 1,
-					Tags:  []string{"tag:mytag"},
-				},
-				{
-					Name:  "countMetricB",
-					Typ:   Count,
-					Value: 2,
-					Tags:  []string{"tag:mytagB"},
-				},
-				{
-					Name:  "histogramMetricA",
-					Typ:   Histogram,
-					Value: 4.2,
-					Tags:  []string{"tag:mytagC"},
-				},
-			},
-			expectedCountMetrics:        []statsdCountMetric{},
-			expectedHistogramMetrics:    []statsdDefaultMetric{},
-			expectedGaugeMetrics:        []statsdDefaultMetric{},
-			expectedDistributionMetrics: []statsdDefaultMetric{},
-		},
 	}
 
 	for _, tc := range testCases {
@@ -365,7 +334,6 @@ func TestDDPush(t *testing.T) {
 		}
 
 		ddClient := &ddClient{
-			enabled:   tc.metricsEnabled,
 			statsdCli: mockStatsdClient,
 		}
 
@@ -381,7 +349,6 @@ func TestDDPush(t *testing.T) {
 
 func TestDDPushWithRate(t *testing.T) {
 	testCases := []struct {
-		metricsEnabled              bool
 		inputMetrics                []RatedMetric
 		expectedCountMetrics        []statsdCountMetric
 		expectedGaugeMetrics        []statsdDefaultMetric
@@ -389,7 +356,6 @@ func TestDDPushWithRate(t *testing.T) {
 		expectedDistributionMetrics []statsdDefaultMetric
 	}{
 		{
-			metricsEnabled: true,
 			inputMetrics: []RatedMetric{
 				{
 					Metric: Metric{
@@ -411,7 +377,6 @@ func TestDDPushWithRate(t *testing.T) {
 			},
 		},
 		{
-			metricsEnabled: true,
 			inputMetrics: []RatedMetric{
 				{
 					Metric: Metric{
@@ -481,42 +446,6 @@ func TestDDPushWithRate(t *testing.T) {
 				},
 			},
 		},
-		{
-			metricsEnabled: false,
-			inputMetrics: []RatedMetric{
-				{
-					Metric: Metric{
-						Name:  "countMetricA",
-						Typ:   Count,
-						Value: 1,
-						Tags:  []string{"tag:mytag"},
-					},
-					Rate: 0.4,
-				},
-				{
-					Metric: Metric{
-						Name:  "histogramMetricA",
-						Typ:   Histogram,
-						Value: 4.2,
-						Tags:  []string{"tag:mytagC"},
-					},
-					Rate: 0.2,
-				},
-				{
-					Metric: Metric{
-						Name:  "distributionMetricA",
-						Typ:   Distribution,
-						Value: 1.3,
-						Tags:  []string{"tag:mytagE"},
-					},
-					Rate: 0.5,
-				},
-			},
-			expectedCountMetrics:        []statsdCountMetric{},
-			expectedHistogramMetrics:    []statsdDefaultMetric{},
-			expectedGaugeMetrics:        []statsdDefaultMetric{},
-			expectedDistributionMetrics: []statsdDefaultMetric{},
-		},
 	}
 
 	for _, tc := range testCases {
@@ -528,7 +457,6 @@ func TestDDPushWithRate(t *testing.T) {
 		}
 
 		ddClient := &ddClient{
-			enabled:   tc.metricsEnabled,
 			statsdCli: mockStatsdClient,
 		}
 
