@@ -1,7 +1,5 @@
 language: go
 go:
-  - "1.13.x"
-script:
-  - go test -race -v ./...
-  - go vet ./...
-  - "[ -z \"`go fmt ./...`\" ]"
+  - 1.15
+install: _script/bootstrap
+script: _script/cibuild
