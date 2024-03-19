@@ -23,10 +23,10 @@ var (
 // parsing configuration from environment.
 //
 // Supported clients:
-//	- DataDog:
-//		DOGSTATSD_ENABLED
-//		DOGSTATSD_HOST
-//		DOGSTATSD_PORT
+//   - DataDog:
+//     DOGSTATSD_ENABLED
+//     DOGSTATSD_HOST
+//     DOGSTATSD_PORT
 func newClientPool() (*clientPool, error) {
 	var clients []Client
 
